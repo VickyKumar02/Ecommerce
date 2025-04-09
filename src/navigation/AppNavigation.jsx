@@ -5,6 +5,7 @@ import LoginScreen from '../screens/LoginScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import store from '../redux/store';
 import ProductListScreen from '../screens/ProductListScreen';
+import ProductDetailScreen from '../screens/ProductDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,12 @@ const AppNavigation = () => {
             name="ProductList"
             component={ProductListScreen}
             options={{headerShown: true, title: 'Product List'}}
+          />
+
+          <Stack.Screen
+            name="ProductDetails"
+            component={ProductDetailScreen}
+            options={{headerShown: true, title: 'Product Details'}}
           />
         </Stack.Navigator>
       </NavigationContainer>

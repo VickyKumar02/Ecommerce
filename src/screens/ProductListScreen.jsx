@@ -31,7 +31,7 @@ const ProductListScreen = ({navigation}) => {
   const renderItem = ({item}) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => console.log('Item Clicked')}>
+      onPress={() => navigation.navigate('ProductDetails', {product: item})}>
       <Image
         source={{uri: item.image}}
         style={styles.image}
