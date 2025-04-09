@@ -21,7 +21,7 @@ const LoginScreen = ({navigation}) => {
   const handleLogin = () => {
     if (email.trim() && password.trim()) {
       dispatch(login({name: email}));
-      Alert.alert('Success', 'Login Successfully!');
+      navigation.replace('ProductList');
     } else {
       Alert.alert('Error', 'Email and Password are required!');
     }
