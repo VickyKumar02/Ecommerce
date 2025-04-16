@@ -5,127 +5,224 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Image,
+  Alert,
   KeyboardAvoidingView,
+  ScrollView,
   Platform,
+  ToastAndroid,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
-import { login } from '../redux/userSlice';
+import {login} from '../redux/userSlice';
 
 const LoginScreen = ({navigation}) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
+  const [secure, setSecure] = useState(true);
 
   const handleLogin = () => {
     if (email.trim() && password.trim()) {
-      dispatch(login({name: email}));
+      dispatch(login({email, password}));
       navigation.replace('ProductList');
     } else {
-      Alert.alert('Error', 'Email and Password are required!');
+      Alert.alert('Error', 'Please enter both email and password');
     }
   };
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={styles.inner}>
-        <Image
-          source={{
-            uri: 'https://cdn-icons-png.flaticon.com/512/747/747376.png',
-          }}
-          style={styles.avatar}
-        />
-        <Text style={styles.title}>Welcome Back!</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.container}>
+          <Image
+            source={require('../assets/person.png')}
+            style={styles.loginImage}
+          />
+          <Text style={styles.title}>Login in</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#888"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="#999"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+            />
+            <View style={styles.passwordWrapper}>
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="#999"
+                style={styles.input}
+                value={password}
+                secureTextEntry={secure}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setSecure(!secure)}>
+                <Image
+                  style={styles.iconImage}
+                  source={
+                    secure
+                      ? require('../assets/closeeye.png')
+                      : require('../assets/eye.png')
+                  }
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>LOGIN</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              ToastAndroid.show(
+                'Open forget password screen',
+                ToastAndroid.SHORT,
+              );
+            }}>
+            <Text style={styles.forgot}>Forgot Password?</Text>
+          </TouchableOpacity>
 
-        <Text style={styles.footerText}>
-          Don't have an account? <Text style={styles.signup}>Sign up</Text>
-        </Text>
-      </View>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.signupText}>
+            Don’t have an account?
+            <Text
+              style={styles.signupLink}
+              onPress={() =>
+                ToastAndroid.show('Open sign up screen', ToastAndroid.SHORT)
+              }>
+              {' '}
+              Sign up
+            </Text>
+          </Text>
+
+          <View style={styles.socialContainer}>
+            <TouchableOpacity
+              onPress={() =>
+                ToastAndroid.show(
+                  'Authenticate with facebook',
+                  ToastAndroid.SHORT,
+                )
+              }>
+              <Image
+                source={require('../assets/facebook.png')}
+                style={styles.socialIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                ToastAndroid.show(
+                  'Authenticate with google',
+                  ToastAndroid.SHORT,
+                )
+              }>
+              <Image
+                source={require('../assets/google.png')}
+                style={styles.socialIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
 export default LoginScreen;
 
+const violet = '#6a0dad';
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fefefe',
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
   },
-  inner: {
-    padding: 24,
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 40,
   },
-  avatar: {
-    width: 100,
-    height: 100,
+  loginImage: {
+    height: 120,
+    width: 120,
     marginBottom: 20,
-    borderRadius: 50,
+  },
+  iconImage: {
+    width: 20,
+    height: 20,
+    tintColor: '#999',
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '600',
     marginBottom: 30,
+    color: violet,
   },
-  input: {
+  inputContainer: {
     width: '100%',
-    backgroundColor: '#f2f2f2',
-    padding: 14,
-    borderRadius: 12,
-    fontSize: 16,
     marginBottom: 15,
   },
+  input: {
+    backgroundColor: '#f1f1f1',
+    padding: 12,
+    borderRadius: 25,
+    marginBottom: 15,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    color: '#333',
+  },
+  passwordWrapper: {
+    position: 'relative',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 20,
+    top: 14,
+  },
+  forgot: {
+    alignSelf: 'flex-end',
+    marginBottom: 25,
+    color: violet,
+    fontSize: 14,
+  },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: violet,
     paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: 12,
+    borderRadius: 25,
     width: '100%',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-    shadowColor: '#007bff',
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    marginBottom: 25,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  footerText: {
+  signupText: {
+    color: '#999',
     fontSize: 14,
-    color: '#555',
   },
-  signup: {
-    color: '#007bff',
-    fontWeight: '600',
+  signupLink: {
+    color: violet,
+    fontWeight: 'bold',
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    marginTop: 20,
+    gap: 15,
+  },
+  socialIcon: {
+    width: 38,
+    height: 38,
+    resizeMode: 'contain',
   },
 });

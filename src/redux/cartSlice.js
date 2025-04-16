@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    items: [],
-    totalQuantity: 0,
-    totalPrice: 0,
+    items: [], // array of cart items
+    totalQuantity: 0, // total number of units (for badge)
+    totalPrice: 0, // total cost
 };
 
 const cartSlice = createSlice({
@@ -58,16 +58,18 @@ const cartSlice = createSlice({
 
         decreaseQuantity: (state, action) => {
             const item = state.items.find(item => item.id === action.payload);
-            if (item && item.quantity > 1) {
-                item.quantity -= 1;
-                item.totalPrice -= item.price;
-                state.totalQuantity -= 1;
-                state.totalPrice -= item.price;
-            } else if (item && item.quantity === 1) {
-                // If only 1 left, remove it completely
-                state.totalQuantity -= 1;
-                state.totalPrice -= item.price;
-                state.items = state.items.filter(i => i.id !== action.payload);
+            if (item) {
+                if (item.quantity > 1) {
+                    item.quantity -= 1;
+                    item.totalPrice -= item.price;
+                    state.totalQuantity -= 1;
+                    state.totalPrice -= item.price;
+                } else {
+                    // Remove item if quantity is 1
+                    state.totalQuantity -= 1;
+                    state.totalPrice -= item.price;
+                    state.items = state.items.filter(i => i.id !== action.payload);
+                }
             }
         },
     },
